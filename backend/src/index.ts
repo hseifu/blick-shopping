@@ -15,7 +15,7 @@ const MONGODB_URI =
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // Vite default dev server to be used later on by the frontend
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Vite default dev server to be used later on by the frontend
   })
 );
 app.use(express.json());
