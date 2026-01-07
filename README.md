@@ -12,10 +12,16 @@ This application provides a simple but polished shopping list manager where user
 shopping-list-app/
 ├── backend/
 │   ├── src/
+│   │   ├── controllers/
+│   │   │   └── itemController.ts
 │   │   ├── models/
 │   │   │   └── Item.ts
+│   │   ├── repositories/
+│   │   │   └── itemRepository.ts
 │   │   ├── routes/
 │   │   │   └── items.ts
+│   │   ├── services/
+│   │   │   └── itemService.ts
 │   │   ├── index.ts
 │   │   └── types.ts
 │   ├── .env.example
@@ -214,3 +220,54 @@ Visit `http://localhost:5173` in your browser.
 - `POST /items` - Add new item (body: `{ name: string }`)
 - `PUT /items/:id` - Update bought status (body: `{ bought: boolean }`)
 - `DELETE /items/:id` - Delete item
+
+## Backend Architecture
+
+The backend follows a layered architecture pattern with clear separation of concerns:
+
+### Layers
+
+1. **Routes** (`src/routes/`)
+   - Define API endpoints and HTTP methods
+   - Delegate request handling to controllers
+   - Keep routing logic minimal and focused
+
+2. **Controllers** (`src/controllers/`)
+   - Handle HTTP request/response logic
+   - Extract data from requests
+   - Call appropriate service methods
+   - Format responses and handle HTTP status codes
+   - Catch and transform errors into appropriate HTTP responses
+
+3. **Services** (`src/services/`)
+   - Contain business logic and validation
+   - Coordinate between different repositories if needed
+   - Throw domain-specific errors
+   - Independent of HTTP concerns
+
+4. **Repositories** (`src/repositories/`)
+   - Handle all database operations
+   - Abstract database queries from business logic
+   - Single source of truth for data access
+   - Use Mongoose models to interact with MongoDB
+
+5. **Models** (`src/models/`)
+   - Define Mongoose schemas and data structure
+   - Database schema validation
+   - Define document interfaces
+
+### Data Flow
+
+```
+Request → Routes → Controller → Service → Repository → Database
+                                                ↓
+Response ← Routes ← Controller ← Service ← Repository
+```
+
+### Benefits
+
+- **Separation of Concerns**: Each layer has a single, well-defined responsibility
+- **Testability**: Easy to unit test each layer independently
+- **Maintainability**: Changes in one layer don't affect others
+- **Reusability**: Services and repositories can be reused across different controllers
+- **Scalability**: Easy to add new features following the same pattern
